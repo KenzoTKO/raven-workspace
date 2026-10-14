@@ -15,7 +15,9 @@ export default function TasksPage() {
   const [mode,setMode] = useState("Prisons");
   const [priority,setPriority] = useState("Normal");
   const [notice,setNotice] = useState("Loading tasks…");
-  const [busy,setBusy] = useState(false);\n  const [query,setQuery] = useState("");\n  const [filter,setFilter] = useState("All");
+  const [busy,setBusy] = useState(false);
+  const [query,setQuery] = useState("");
+  const [filter,setFilter] = useState("All");
   async function load() {
     try { const {data,error}=await createClient().from("tasks").select("id,title,mode,status,priority,created_at").order("created_at",{ascending:false}); if(error) throw error; setTasks((data??[]) as Task[]); setNotice(""); }
     catch(e) { setNotice(e instanceof Error ? e.message : "Could not load tasks."); }
@@ -32,7 +34,9 @@ export default function TasksPage() {
     try { const {error}=await createClient().from("tasks").update({status}).eq("id",t.id); if(error) throw error; await load(); }
     catch(e) { setNotice(e instanceof Error ? e.message : "Could not update task."); }
   }
-  async function remove(t:Task) { if (!confirm("Delete this task?")) return; const { error } = await createClient().from("tasks").delete().eq("id", t.id); if (error) setNotice(error.message); else await load(); }\n  const filtered = tasks.filter(t => (t.title + " " + t.mode).toLowerCase().includes(query.toLowerCase()) && (filter === "All" || t.status === filter));\n  return <AuthGuard><main className="min-h-screen px-5 py-8 md:px-10"><div className="mx-auto max-w-5xl">
+  async function remove(t:Task) { if (!confirm("Delete this task?")) return; const { error } = await createClient().from("tasks").delete().eq("id", t.id); if (error) setNotice(error.message); else await load(); }
+  const filtered = tasks.filter(t => (t.title + " " + t.mode).toLowerCase().includes(query.toLowerCase()) && (filter === "All" || t.status === filter));
+  return <AuthGuard><main className="min-h-screen px-5 py-8 md:px-10"><div className="mx-auto max-w-5xl">
     <Link href="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white"><ArrowLeft size={16}/> Back to overview</Link>
     <div className="mt-8 flex items-center gap-3"><div className="grid h-12 w-12 place-items-center rounded-xl bg-indigo-300/10 text-indigo-200"><CheckSquare/></div><div><p className="text-xs uppercase tracking-[.2em] text-indigo-200">Raven Network</p><h1 className="text-3xl font-semibold">Tasks</h1></div></div>
     <p className="mt-3 text-slate-400">Track development work across every game mode.</p>
