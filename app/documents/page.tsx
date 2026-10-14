@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, FileText, Plus, Search, Trash2 } from "lucide-react";
-import { getSupabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 
 type Doc = { id: string; title: string; body: string; category: string; updated_at: string };
 
@@ -18,7 +18,7 @@ export default function DocumentsPage() {
 
   async function load() {
     try {
-      const db = getSupabase();
+      const db = createClient();
       const { data, error } = await db.from("documents").select("id,title,body,category,updated_at").order("updated_at", { ascending: false });
       if (error) throw error;
       setDocs((data ?? []) as Doc[]);
@@ -34,7 +34,7 @@ export default function DocumentsPage() {
     if (!title.trim()) return;
     setBusy(true); setNotice("");
     try {
-      const { error } = await getSupabase().from("documents").insert({ title: title.trim(), body, category });
+      const { error } = await createClient().from("documents").insert({ title: title.trim(), body, category });
       if (error) throw error;
       setTitle(""); setBody(""); setCategory("General");
       await load();
@@ -47,7 +47,7 @@ export default function DocumentsPage() {
   async function remove(id: string) {
     if (!confirm("Delete this document?")) return;
     try {
-      const { error } = await getSupabase().from("documents").delete().eq("id", id);
+      const { error } = await createClient().from("documents").delete().eq("id", id);
       if (error) throw error;
       await load();
     } catch (e) { setNotice(e instanceof Error ? e.message : "Could not delete document."); }
