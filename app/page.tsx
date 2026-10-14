@@ -1,3 +1,4 @@
+import AuthGuard from "@/components/AuthGuard";
 import Link from "next/link";
 import { ArrowUpRight, Boxes, CheckSquare, FileText, Shield, Users } from "lucide-react";
 
@@ -15,7 +16,7 @@ const cards = [
 ];
 
 export default function HomePage() {
-  return <main className="min-h-screen">
+  return <AuthGuard><main className="min-h-screen">
     <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-white/10 bg-[#0c111b] p-6 lg:block">
       <div className="mb-12 flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-400/15 text-indigo-200"><Shield size={21}/></div><div><div className="font-semibold tracking-wide">RAVEN</div><div className="text-xs text-slate-500">NETWORK WORKSPACE</div></div></div>
       <div className="mb-3 text-xs uppercase tracking-[.18em] text-slate-500">Workspace</div>
@@ -32,5 +33,5 @@ export default function HomePage() {
       <div className="mt-5 grid gap-4 md:grid-cols-2">{modes.map((mode,index) => <article key={mode.name} className="rounded-2xl border border-white/10 bg-[#0c111b] p-5 transition hover:border-indigo-300/30"><div className="flex items-start justify-between"><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-xl bg-white/[.06] text-slate-300"><Boxes size={20}/></div><div><h3 className="font-medium">{mode.name}</h3><p className="mt-1 text-sm text-slate-500">{mode.description}</p></div></div><span className="rounded-full border border-white/10 px-2.5 py-1 text-xs text-slate-400">{mode.status}</span></div><div className="mt-6 flex items-center justify-between border-t border-white/[.07] pt-4 text-xs text-slate-500"><span>Project 0{index+1}</span><span className="flex items-center gap-1">Open overview <ArrowUpRight size={13}/></span></div></article>)}</div>
       <footer className="mt-14 border-t border-white/10 pt-5 text-xs text-slate-600">RAVEN WORKSPACE <span className="px-2">·</span> Starter dashboard — connect Supabase to enable authentication and shared data.</footer>
     </section>
-  </main>;
+  </main></AuthGuard>;
 }
