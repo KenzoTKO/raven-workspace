@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckSquare, Plus } from "lucide-react";
-import { getSupabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 
 type Task = { id: string; title: string; mode: string; status: string; priority: string; created_at: string };
 
@@ -15,19 +15,19 @@ export default function TasksPage() {
   const [notice,setNotice] = useState("Loading tasks…");
   const [busy,setBusy] = useState(false);
   async function load() {
-    try { const {data,error}=await getSupabase().from("tasks").select("id,title,mode,status,priority,created_at").order("created_at",{ascending:false}); if(error) throw error; setTasks((data??[]) as Task[]); setNotice(""); }
+    try { const {data,error}=await createClient().from("tasks").select("id,title,mode,status,priority,created_at").order("created_at",{ascending:false}); if(error) throw error; setTasks((data??[]) as Task[]); setNotice(""); }
     catch(e) { setNotice(e instanceof Error ? e.message : "Could not load tasks."); }
   }
   useEffect(()=>{void load();},[]);
   async function add(e:React.FormEvent) {
     e.preventDefault(); if(!title.trim()) return; setBusy(true);
-    try { const {error}=await getSupabase().from("tasks").insert({title:title.trim(),mode,priority,status:"To do"}); if(error) throw error; setTitle(""); await load(); }
+    try { const {error}=await createClient().from("tasks").insert({title:title.trim(),mode,priority,status:"To do"}); if(error) throw error; setTitle(""); await load(); }
     catch(e) { setNotice(e instanceof Error ? e.message : "Could not create task."); }
     finally { setBusy(false); }
   }
   async function toggle(t:Task) {
     const status=t.status==="Done"?"To do":"Done";
-    try { const {error}=await getSupabase().from("tasks").update({status}).eq("id",t.id); if(error) throw error; await load(); }
+    try { const {error}=await createClient().from("tasks").update({status}).eq("id",t.id); if(error) throw error; await load(); }
     catch(e) { setNotice(e instanceof Error ? e.message : "Could not update task."); }
   }
   return <main className="min-h-screen px-5 py-8 md:px-10"><div className="mx-auto max-w-5xl">
