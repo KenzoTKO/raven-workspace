@@ -24,7 +24,13 @@ export default function TasksPage() {
     try { const {data,error}=await createClient().from("tasks").select("id,title,mode,status,priority,created_at").order("created_at",{ascending:false}); if(error) throw error; setTasks((data??[]) as Task[]); setNotice(""); }
     catch(e) { setNotice(e instanceof Error ? e.message : "Could not load tasks."); }
   }
-  useEffect(()=>{\n    void load();\n    const params = new URLSearchParams(window.location.search);\n    const requestedMode = params.get("mode");\n    const validModes = ["UnstableFFA", "Gens", "Prisons", "Earth / Towny", "Network-wide"];\n    if (requestedMode && validModes.includes(requestedMode)) { setModeFilter(requestedMode); setMode(requestedMode); }\n  },[]);
+  useEffect(()=>{
+    void load();
+    const params = new URLSearchParams(window.location.search);
+    const requestedMode = params.get("mode");
+    const validModes = ["UnstableFFA", "Gens", "Prisons", "Earth / Towny", "Network-wide"];
+    if (requestedMode && validModes.includes(requestedMode)) { setModeFilter(requestedMode); setMode(requestedMode); }
+  },[]);
   async function add(e:React.FormEvent) {
     e.preventDefault(); if(!title.trim()) return; setBusy(true);
     try { const {error}=await createClient().from("tasks").insert({title:title.trim(),mode,priority,status:"To do"}); if(error) throw error; setTitle(""); await load(); }
