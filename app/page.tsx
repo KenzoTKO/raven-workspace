@@ -13,7 +13,7 @@ const cards = [
   { title: "Documents", detail: "Specs, decisions, and references", icon: FileText, href: "/documents" },
   { title: "Tasks", detail: "Track work across the network", icon: CheckSquare, href: "/tasks" },
   { title: "Search", detail: "Find docs and tasks instantly", icon: Search, href: "/search" },
-  { title: "Team", detail: "Roles, ownership, and access", icon: Users, href: "#team" }
+  { title: "Team", detail: "Roles, ownership, and access", icon: Users, href: "/team" }
 ];
 
 export default function HomePage() {
@@ -22,7 +22,7 @@ export default function HomePage() {
       <div className="mb-12 flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-400/15 text-indigo-200"><Shield size={21}/></div><div><div className="font-semibold tracking-wide">RAVEN</div><div className="text-xs text-slate-500">NETWORK WORKSPACE</div></div></div>
       <div className="mb-3 text-xs uppercase tracking-[.18em] text-slate-500">Workspace</div>
       <div className="rounded-lg bg-white/[.07] px-3 py-2.5 text-sm">Overview</div>
-      <div className="mt-8 text-xs uppercase tracking-[.18em] text-slate-500">Network</div>
+      <Link href="/team" className="mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-white/[.05] hover:text-white"><Users size={15}/> Team access</Link><Link href="/search" className="mt-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-white/[.05] hover:text-white"><Search size={15}/> Search</Link><div className="mt-8 text-xs uppercase tracking-[.18em] text-slate-500">Network</div>
       {modes.map(mode => <div key={mode.name} className="mt-2 rounded-lg px-3 py-2 text-sm text-slate-400">{mode.name}</div>)}
       <div className="absolute bottom-6 left-6 right-6 rounded-xl border border-white/10 p-3 text-xs text-slate-500">Raven Network · Internal tools</div>
     </aside>
