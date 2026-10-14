@@ -1,6 +1,8 @@
 "use client";
 
 import AuthGuard from "@/components/AuthGuard";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase";
 import Link from "next/link";
 import { ArrowUpRight, Boxes, CheckSquare, FileText, Shield, Search, Users, Activity, Sparkles, ChevronRight } from "lucide-react";
 
@@ -19,6 +21,21 @@ const tools = [
 ];
 
 export default function HomePage() {
+  const [stats, setStats] = useState({ tasks: 0, done: 0, docs: 0, loaded: false });
+  useEffect(() => {
+    let active = true;
+    async function loadStats() {
+      const db = createClient();
+      const [tasks, done, docs] = await Promise.all([
+        db.from("tasks").select("id", { count: "exact", head: true }),
+        db.from("tasks").select("id", { count: "exact", head: true }).eq("status", "Done"),
+        db.from("documents").select("id", { count: "exact", head: true })
+      ]);
+      if (active) setStats({ tasks: tasks.count ?? 0, done: done.count ?? 0, docs: docs.count ?? 0, loaded: true });
+    }
+    void loadStats();
+    return () => { active = false; };
+  }, []);
   return <AuthGuard><main className="min-h-screen bg-[#09090f] text-[#f4f1fa]">
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-[250px] border-r border-white/[.07] bg-[#0c0b13] px-5 py-7 lg:flex lg:flex-col">
       <Link href="/" className="mb-12 flex items-center gap-3">
@@ -46,7 +63,7 @@ export default function HomePage() {
             <p className="mt-5 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">The command center for building, organizing, and launching every corner of Raven Network.</p>
             <div className="mt-8 flex flex-wrap gap-3"><Link href="/projects" className="inline-flex items-center gap-2 rounded-xl bg-[#c4b5fd] px-5 py-3 text-sm font-semibold text-[#171020] shadow-lg shadow-violet-950/30 transition hover:bg-[#d6ccff]">Explore projects <ArrowUpRight size={16}/></Link><Link href="/search" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.03] px-5 py-3 text-sm text-slate-200 transition hover:bg-white/[.07]"><Search size={16}/> Search workspace</Link></div>
           </div>
-          <div className="hidden rounded-2xl border border-white/[.09] bg-black/20 p-5 lg:block"><div className="flex items-center justify-between text-[10px] uppercase tracking-[.18em] text-slate-500"><span>Network status</span><Activity size={14} className="text-amber-200"/></div><div className="mt-5 text-3xl font-semibold">04<span className="ml-2 text-sm font-normal text-slate-500">projects</span></div><div className="mt-4 h-px bg-white/[.08]"/><div className="mt-4 flex items-center gap-2 text-xs text-slate-400"><span className="h-2 w-2 rounded-full bg-amber-200"/> One workspace. Shared direction.</div></div>
+          <div className="hidden rounded-2xl border border-white/[.09] bg-black/20 p-5 lg:block"><div className="flex items-center justify-between text-[10px] uppercase tracking-[.18em] text-slate-500"><span>Live workspace</span><Activity size={14} className="text-amber-200"/></div><div className="mt-5 grid grid-cols-2 gap-4"><div><div className="text-3xl font-semibold">{stats.loaded ? stats.tasks : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Total tasks</div></div><div><div className="text-3xl font-semibold text-emerald-200">{stats.loaded ? stats.done : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Completed</div></div><div><div className="text-2xl font-semibold">{stats.loaded ? stats.docs : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Documents</div></div><div><div className="text-2xl font-semibold">04</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Game modes</div></div></div><div className="mt-4 h-px bg-white/[.08]"/><div className="mt-4 flex items-center gap-2 text-xs text-slate-400"><span className="h-2 w-2 rounded-full bg-emerald-300"/> Live counts from your workspace</div></div>
         </div>
       </div>
       <div className="mt-10 flex items-end justify-between gap-4"><div><p className="text-[10px] font-semibold uppercase tracking-[.24em] text-violet-200/80">The workspace</p><h2 className="mt-2 text-2xl font-semibold tracking-tight">Everything in its place.</h2><p className="mt-2 text-sm text-slate-500">Your tools, without the clutter.</p></div><span className="hidden text-[10px] tracking-[.18em] text-slate-600 sm:block">RAVEN / 01—04</span></div>
