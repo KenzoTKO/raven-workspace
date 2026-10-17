@@ -135,7 +135,7 @@ export default function WatchPartyPage() {
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState<{ name?: string }>();
         const names = Object.values(state).flat().map((entry) => entry.name || "Guest");
-        setPeople([...new Set(names)]);
+        setPeople(Array.from(new Set(names)));
       })
       .subscribe(async (status: string) => {
         setConnected(status === "SUBSCRIBED");
