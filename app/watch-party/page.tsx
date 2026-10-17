@@ -65,7 +65,7 @@ export default function WatchPartyPage() {
   const frameRef = useRef<HTMLDivElement>(null);
   const remoteActionRef = useRef(false);
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastBroadcastRef = useRef(0);
+  const lastBroadcastRef = useRef(0);\n  const videoIdRef = useRef(videoId);\n  const queueRef = useRef(queue);\n  useEffect(() => { videoIdRef.current = videoId; }, [videoId]);\n  useEffect(() => { queueRef.current = queue; }, [queue]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -125,8 +125,8 @@ export default function WatchPartyPage() {
       })
       .on("broadcast", { event: "request-state" }, () => {
         if (isHost && playerRef.current) {
-          void channel.send({ type: "broadcast", event: "player", payload: { videoId, time: playerRef.current.getCurrentTime(), playing: playerRef.current.getPlayerState() === 1, at: Date.now() } });
-          void channel.send({ type: "broadcast", event: "queue", payload: queue });
+          void channel.send({ type: "broadcast", event: "player", payload: { videoId: videoIdRef.current, time: playerRef.current.getCurrentTime(), playing: playerRef.current.getPlayerState() === 1, at: Date.now() } });
+          void channel.send({ type: "broadcast", event: "queue", payload: queueRef.current });
         }
       })
       .on("presence", { event: "sync" }, () => {
@@ -147,7 +147,7 @@ export default function WatchPartyPage() {
       void supabase.removeChannel(channel);
       channelRef.current = null;
     };
-  }, [room, name, isHost, videoId, queue]);
+  }, [room, name, isHost]);
 
   useEffect(() => {
     if (!frameRef.current) return;
