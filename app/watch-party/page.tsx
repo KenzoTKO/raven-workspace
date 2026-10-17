@@ -65,7 +65,11 @@ export default function WatchPartyPage() {
   const frameRef = useRef<HTMLDivElement>(null);
   const remoteActionRef = useRef(false);
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastBroadcastRef = useRef(0);\n  const videoIdRef = useRef(videoId);\n  const queueRef = useRef(queue);\n  useEffect(() => { videoIdRef.current = videoId; }, [videoId]);\n  useEffect(() => { queueRef.current = queue; }, [queue]);
+  const lastBroadcastRef = useRef(0);
+  const videoIdRef = useRef(videoId);
+  const queueRef = useRef(queue);
+  useEffect(() => { videoIdRef.current = videoId; }, [videoId]);
+  useEffect(() => { queueRef.current = queue; }, [queue]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -98,7 +102,6 @@ export default function WatchPartyPage() {
         const player = playerRef.current;
         if (player) {
           const drift = Math.abs((player.getCurrentTime?.() || 0) - (payload.time || 0));
-          if (player.getVideoData && false) return;
           if (drift > 2) player.seekTo(Math.max(0, payload.time), true);
           if (payload.playing) player.playVideo(); else player.pauseVideo();
         }
